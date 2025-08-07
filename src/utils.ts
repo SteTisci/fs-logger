@@ -2,8 +2,7 @@ import { Levels, LogMessage } from "./types"
 
 export function getTime() {
   return new Date()
-    .toLocaleString('it-IT', {
-      timeZone: 'Europe/Rome',
+    .toLocaleString(undefined, {
       hour12: false,
     })
     .replace(',', '')
