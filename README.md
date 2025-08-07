@@ -21,7 +21,7 @@ A **lightweight** and **flexible** logging utility for Node.js, designed for eff
 Install the package via **npm**:
 
 ```bash
-npm install fs-logger
+npm install @ste_tisci/fs-logger
 ```
 
 ## 🛠️ Usage Examples
@@ -29,7 +29,7 @@ npm install fs-logger
 ### Initialization and Configuration
 
 ```typescript
-import { createFileLogger } from "fs-logger";
+import { createFileLogger } from "@ste_tisci/fs-logger";
 
 // Create a new logger instance with a default log file path
 const logger = createFileLogger("logs/app.log");
@@ -43,7 +43,7 @@ logger.definePath("logs/custom-app.log");
 Messages are first added to an internal buffer.
 
 ```typescript
-import { createFileLogger } from "fs-logger";
+import { createFileLogger } from "@ste_tisci/fs-logger";
 
 const logger = createFileLogger("logs/app.log");
 

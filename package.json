@@ -1,5 +1,5 @@
 {
-  "name": "fs-logger",
+  "name": "@ste_tisci/fs-logger",
   "version": "0.0.2",
   "description": "A simple lightweight file-based logger for Node.js enviroment",
   "main": "./dist/index.js",
