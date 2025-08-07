@@ -1,0 +1,26 @@
+{
+  "name": "@ste_tisci/simple-logger",
+  "version": "0.0.2",
+  "description": "A simple lightweight file-based logger for Node.js enviroment",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "url": "git+https://github.com/SteTisci/simple-logger.git"
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "keywords": [
+    "logger",
+    "Typescript",
+    "Node.js"
+  ],
+  "author": "ste_tisci",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^24.2.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
+  }
+}
