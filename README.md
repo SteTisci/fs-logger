@@ -1,8 +1,8 @@
-# `simple-logger`
+# `fs-logger`
 
 A **lightweight** and **flexible** logging utility for Node.js, designed for efficient log file management. 🚀
 
-`simple-logger` uses a buffer-based logging system to optimize disk writes. It supports customizable log levels (`INFO`, `ERROR`, `DEBUG`), timestamped messages, and a **Promise-based API** for full control over log files (creation, reading, writing, and deletion).
+`fs-logger` uses a buffer-based logging system to optimize disk writes. It supports customizable log levels (`INFO`, `ERROR`, `DEBUG`), timestamped messages, and a **Promise-based API** for full control over log files (creation, reading, writing, and deletion).
 
 ---
 
@@ -21,7 +21,7 @@ A **lightweight** and **flexible** logging utility for Node.js, designed for eff
 Install the package via **npm**:
 
 ```bash
-npm install @ste_tisci/simple-logger
+npm install fs-logger
 ```
 
 ## 🛠️ Usage Examples
@@ -29,7 +29,7 @@ npm install @ste_tisci/simple-logger
 ### Initialization and Configuration
 
 ```typescript
-import { createFileLogger } from "@ste_tisci/simple-logger";
+import { createFileLogger } from "fs-logger";
 
 // Create a new logger instance with a default log file path
 const logger = createFileLogger("logs/app.log");
@@ -43,7 +43,7 @@ logger.definePath("logs/custom-app.log");
 Messages are first added to an internal buffer.
 
 ```typescript
-import { createFileLogger } from "@ste_tisci/simple-logger";
+import { createFileLogger } from "fs-logger";
 
 const logger = createFileLogger("logs/app.log");
 

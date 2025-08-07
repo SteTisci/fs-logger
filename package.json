@@ -1,12 +1,12 @@
 {
-  "name": "@ste_tisci/simple-logger",
+  "name": "fs-logger",
   "version": "0.0.2",
   "description": "A simple lightweight file-based logger for Node.js enviroment",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "repository": {
-    "url": "git+https://github.com/SteTisci/simple-logger.git"
+    "url": "git+https://github.com/SteTisci/fs-logger.git"
   },
   "scripts": {
     "build": "tsup"
