@@ -19,16 +19,15 @@ export async function createFile( filePath : string, overwrite = true): Promise<
 
   const exists = await fileExists(filePath)
   if (exists && !overwrite) {
-    console.log(`Log file already exists and won't be overwritten: ${filePath}`)
     return
   }
 
   await fs.writeFile(filePath, '', 'utf-8')
-  console.log(`Log file created at: ${filePath}`)
 }
 
-export async function writeFile(filePath: string, data: string[]): Promise<void> {
-  await fs.appendFile(filePath, data.join(''), 'utf-8')
+export async function writeFile(filePath: string, data: string | string[]): Promise<void> {
+  const message = typeof data === 'string' ? data : data.join('')
+  await fs.appendFile(filePath, message, 'utf-8')
 }
 
 export async function readFile(filePath: string): Promise<string> {
@@ -37,5 +36,4 @@ export async function readFile(filePath: string): Promise<string> {
 
 export async function removeFile(filePath: string): Promise<void> {
   await fs.rm(filePath)
-  console.log(`Log file deleted: ${filePath}`)
 }

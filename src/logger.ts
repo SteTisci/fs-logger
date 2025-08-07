@@ -1,15 +1,15 @@
 import { createBuffer } from './buffer.js'
 import { createFile, writeFile, readFile, removeFile } from './fileOps.js'
 import { format } from './utils.js'
-import { FileLogger, Levels } from './types.js'
+import { FileLogger, Levels, LogMessage } from './types.js'
 
 export function createFileLogger(initialPath = ''): FileLogger {
   let FILE_PATH = initialPath
 
   const levels: Levels = {
-    ERROR: 'ERROR',
-    INFO: 'INFO',
-    DEBUG: 'DEBUG',
+    ERROR: '[ERROR]',
+    INFO: '[INFO]',
+    DEBUG: '[DEBUG]',
   }
 
   const buffer = createBuffer((msg) => format(msg, levels), levels)
@@ -23,7 +23,13 @@ export function createFileLogger(initialPath = ''): FileLogger {
     await createFile(filePath, overwrite)
   }
 
-  async function write(options: { filePath?: string } = {}): Promise<void> {
+  
+  async function write({ level, message }: LogMessage, options: { filePath?: string } = {}): Promise<void> {
+    const { filePath = FILE_PATH } = options
+    await writeFile(filePath, format({message, level}, levels))
+  }
+
+  async function writeFromBuffer(options: { filePath?: string } = {}): Promise<void> {
     const { filePath = FILE_PATH } = options
     await writeFile(filePath, buffer.data)
     buffer.flush()
@@ -43,6 +49,7 @@ export function createFileLogger(initialPath = ''): FileLogger {
     definePath,
     create,
     write,
+    writeFromBuffer,
     read,
     remove,
     buffer,

@@ -1,9 +1,9 @@
 export type LogLevel = 'INFO' | 'ERROR' | 'DEBUG'
 
 export interface Levels {
-  ERROR: 'ERROR',
-  INFO: 'INFO',
-  DEBUG: 'DEBUG'
+  ERROR : '[ERROR]',
+  INFO: '[INFO]',
+  DEBUG: '[DEBUG]'
 }
 
 export interface LogMessage {
@@ -14,7 +14,8 @@ export interface LogMessage {
 export interface FileLogger {
   definePath(filePath: string): void
   create(options?: {filePath?: string, overwrite?: boolean}): Promise<void>
-  write(options?: { filePath?: string }): Promise<void>
+  write({level, message}: LogMessage, options?: { filePath?: string }): Promise<void>
+  writeFromBuffer(options?: { filePath?: string }): Promise<void>
   read(options?: { filePath?: string }): Promise<string | null>
   remove(options?: { filePath?: string }): Promise<void>
   buffer: {
