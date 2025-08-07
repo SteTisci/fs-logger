@@ -1,9 +1,12 @@
-export type LogLevel = 'INFO' | 'ERROR' | 'DEBUG'
+export type LogLevel = 'INFO' | 'ERROR' | 'DEBUG' | 'WARN' | 'FATAL' | 'TRACE'
 
 export interface Levels {
-  ERROR : '[ERROR]',
   INFO: '[INFO]',
-  DEBUG: '[DEBUG]'
+  TRACE: '[TRACE]'
+  WARN: '[WARN]',
+  DEBUG: '[DEBUG]',
+  ERROR : '[ERROR]',
+  FATAL: '[FATAL]',
 }
 
 export interface LogMessage {

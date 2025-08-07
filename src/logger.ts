@@ -7,9 +7,12 @@ export function createFileLogger(initialPath = ''): FileLogger {
   let FILE_PATH = initialPath
 
   const levels: Levels = {
-    ERROR: '[ERROR]',
     INFO: '[INFO]',
+    ERROR: '[ERROR]',
     DEBUG: '[DEBUG]',
+    WARN: '[WARN]',
+    FATAL: '[FATAL]',
+    TRACE: '[TRACE]',
   }
 
   const buffer = createBuffer((msg) => format(msg, levels), levels)
