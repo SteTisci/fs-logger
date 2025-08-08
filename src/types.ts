@@ -17,7 +17,7 @@ export interface LogMessage {
 export interface Buffer {
   data: string[]
   push({level, message}: LogMessage): void
-  write(options?: { filePath?: string }): Promise<void>
+  write(options?: { filePath?: string, flush?: boolean }): Promise<void>
   flush(): void
 }
 
@@ -28,4 +28,5 @@ export interface FileLogger {
   read(options?: { filePath?: string }): Promise<string | null>
   remove(options?: { filePath?: string }): Promise<void>
   createBuffer() : Buffer
+  fileExists(filePath: string) : Promise<boolean>
 }

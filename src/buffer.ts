@@ -14,10 +14,11 @@ export function createBuffer(getPath: () => string) {
       this.data.push(format({ level, message }, levels))
     },
 
-    async write(options: { filePath?: string } = {}): Promise<void> {
-      const { filePath } = options
+    async write(options: { filePath?: string, flush?: boolean } = {}): Promise<void> {
+      const { filePath, flush = true } = options
       await writeFile(filePath || getPath(), this.data)
-      this.flush()
+      
+      if (flush) this.flush()
     },
     
     flush() {

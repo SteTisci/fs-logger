@@ -1,5 +1,5 @@
 import { createBuffer } from './buffer.js'
-import { createFile, writeFile, readFile, removeFile } from './fileOps.js'
+import { createFile, writeFile, readFile, removeFile, fileExists } from './fileOps.js'
 import { format } from './utils.js'
 import { levels } from './levels.js'
 import { FileLogger, LogMessage } from './types.js'
@@ -37,6 +37,7 @@ export function createFileLogger(initialPath = ''): FileLogger {
     write,
     read,
     remove,
+    fileExists,
     createBuffer: () => createBuffer(() => FILE_PATH.value),
   }
 }
