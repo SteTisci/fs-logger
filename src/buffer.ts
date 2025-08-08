@@ -1,6 +1,9 @@
-import { Levels, LogMessage } from './types'
+import { LogMessage } from './types'
+import { format } from './utils'
+import { levels } from './levels'
+import { writeFile } from './fileOps'
 
-export function createBuffer(format: ({level, message}: LogMessage) => string, levels: Levels) {
+export function createBuffer(getPath: () => string) {
   return {
     data: [] as string[],
 
@@ -8,9 +11,15 @@ export function createBuffer(format: ({level, message}: LogMessage) => string, l
       if (!levels[level]) {
         throw new Error(`Invalid log level: ${level}`)
       }
-      this.data.push(format({ level, message }))
+      this.data.push(format({ level, message }, levels))
     },
 
+    async write(options: { filePath?: string } = {}): Promise<void> {
+      const { filePath } = options
+      await writeFile(filePath || getPath(), this.data)
+      this.flush()
+    },
+    
     flush() {
       this.data = []
     },

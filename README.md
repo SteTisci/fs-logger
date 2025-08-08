@@ -2,17 +2,17 @@
 
 A **lightweight** and **flexible** logging utility for Node.js, designed for efficient log file management. 🚀
 
-`fs-logger` uses a buffer-based logging system to optimize disk writes. It supports customizable log levels, timestamped messages, and a **Promise-based API** for full control over log files (creation, reading, writing, and deletion).
+`fs-logger` offers two primary logging methods: an **optimized buffer-based** system for grouping messages and a direct write method for immediate logging. It features a customizable API for log levels, timestamped messages, and full Promise-based control over log file operations.
 
 ---
 
 ## ✨ Main Features
 
--   **Optimized buffer logging**: Groups messages before writing them to disk, reducing I/O operations and improving performance.
--   **Timestamped messages**: Each log is formatted with a local timestamp for accurate traceability.
--   **Customizable log levels**: Filter and manage messages based on their importance (`INFO`, `TRACE`, `WARN`, `ERROR`, `FATAL`, `DEBUG`).
--   **Promise-based API**: Asynchronous file operations that are easy to handle.
--   **Flexible path management**: Define the log file path per operation or use a default path.
+-   **Optimized buffer logging**: Collects multiple messages in an in-memory buffer before committing them to disk in a single I/O operation, which significantly improves performance for high-volume logging.
+-   **Timestamped messages**: Every log entry is automatically formatted with a local timestamp for precise traceability.
+-   **Customizable log levels**: Easily filter and manage log messages based on their severity: `INFO`, `TRACE`, `WARN`, `ERROR`, `FATAL` and `DEBUG`.
+-   **Promise-based API**: All file operations are asynchronous, providing a clean and modern interface for handling file I/O.
+-   **Flexible path management**: Define the log file path per operation or use a persistent default path for an entire logger instance.
 
 ---
 
@@ -40,23 +40,26 @@ logger.definePath("logs/custom-app.log");
 
 ### Logging Messages
 
-Messages are first added to an internal buffer.
+You can either log messages directly to the file or use a buffer for optimized writing.
 
 ```typescript
 import { createFileLogger } from "@ste_tisci/fs-logger";
 
 const logger = createFileLogger("logs/app.log");
 
+// Create a buffer instance
+const buffer = logger.createBuffer();
+
 // Add messages to the buffer
-logger.buffer.push({ level: "INFO", message: "Application started successfully." });
-logger.buffer.push({ level: "DEBUG", message: "Loading configuration." });
-logger.buffer.push({ level: "ERROR", message: "Failed to connect to database." });
+buffer.push({ level: "INFO", message: "Application started successfully." });
+buffer.push({ level: "DEBUG", message: "Loading configuration." });
+buffer.push({ level: "ERROR", message: "Failed to connect to database." });
 
-// Write the buffered messages to the log file
-await logger.writeFromBuffer();
+// Write all buffered messages to the log file at once and clear the buffer
+await buffer.write();
 
-// Write directly to the log file
-logger.write({ level: "WARN", message: "Configuration file is missing, using defaults." });
+// Write a single message directly to the log file without using the buffer
+await logger.write({ level: "WARN", message: "Configuration file is missing, using defaults." });
 ```
 
 ### Log File Management
@@ -73,10 +76,10 @@ console.log(content);
 
 /*
 Output:
-7/8/2025 01:25:30 [INFO] Application started successfully.
-7/8/2025 01:25:30 [DEBUG] Loading configuration.
-7/8/2025 01:25:30 [ERROR] Failed to connect to database.
-7/8/2025 01:25:30 [WARN] Configuration file is missing, using defaults.
+7/8/2025 15:25:30 [INFO] Application started successfully.
+7/8/2025 15:25:32 [DEBUG] Loading configuration.
+7/8/2025 15:25:33 [ERROR] Failed to connect to database.
+7/8/2025 15:25:35 [WARN] Configuration file is missing, using defaults.
 */
 
 // Delete the log file
@@ -84,7 +87,7 @@ await logger.remove();
 ```
 
 > [!TIP]
-> If the path is defined in the `createFileLogger()` method, it can be omitted when you call `create()`, `write()`, `writeFromBuffer()`, `read()` and `remove()` if you are working with the same file.
+> If the path is defined during `createFileLogger()` call or with `definePath()`, it can be omitted when calling `create()`, `write()`, `read()` and `remove()`.
 
 ---
 
@@ -92,29 +95,28 @@ await logger.remove();
 
 ## 🗂️ Logger Methods
 
-This section lists all methods related to logger file creation, writing, reading, and deletion.
+These are the primary methods available on the object returned by `createFileLogger()`.
 
-| Method               | Parameters                                                                                  | Description                                                                                             | Return Type               |
-| -------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------- |
-| `createFileLogger()` | `initialPath?`: `string`                                                                    | Creates a new logger instance with an optional default log file path.                                   | `string`                  |
-| `definePath()`       | `filePath`: `string`                                                                        | Updates the log file path for all future operations.                                                    | `void`                    |
-| `create()`           | `options`: `{ filePath?: string, overwrite?: boolean }`                                     | Creates a new log file. If `overwrite` is `false`, it won’t overwrite existing files (default: `true`). | `Promise<void>`           |
-| `write()`            | `logMessage`: `{ level: LogLevel, message: string }`<br>`options?`: `{ filePath?: string }` | Writes the message to the buffer, then writes buffer content to the log file and clears it.             | `Promise<void>`           |
-| `writeFromBuffer()`  | `options?`: `{ filePath?: string }`                                                         | Writes the entire buffer content to the log file and clears the buffer.                                 | `Promise<void>`           |
-| `read()`             | `options?`: `{ filePath?: string }`                                                         | Reads the content of the log file. Returns a string or `null` if the file doesn't exist.                | `Promise<string \| null>` |
-| `remove()`           | `options?`: `{ filePath?: string }`                                                         | Deletes the log file.                                                                                   | `Promise<void>`           |
+| Method               | Parameters                                                                                  | Description                                                                                                            | Return Type               |
+| -------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `createFileLogger()` | `initialPath?`: `string`                                                                    | A factory function that creates and returns a new logger instance.                                                     | `string`                  |
+| `definePath()`       | `filePath`: `string`                                                                        | Updates the log file path for all subsequent operations performed by this logger instance.                             | `void`                    |
+| `create()`           | `options`: `{ filePath?: string, overwrite?: boolean }`                                     | Creates a new log file at the specified or default path. `overwrite: false` prevents overwriting an existing file.     | `Promise<void>`           |
+| `write()`            | `logMessage`: `{ level: LogLevel, message: string }`<br>`options?`: `{ filePath?: string }` | Writes a single, formatted log message directly to the log file, appending it to the end. Does **not** use the buffer. | `Promise<void>`           |
+| `read()`             | `options?`: `{ filePath?: string }`                                                         | Reads the content of the log file. Returns a string or `null` if the file doesn't exist.                               | `Promise<string \| null>` |
+| `remove()`           | `options?`: `{ filePath?: string }`                                                         | Deletes the log file.                                                                                                  | `Promise<void>`           |
 
 ---
 
 ## 🧰 Buffer Methods
 
-These methods allow you to manage the internal message buffer before writing to file.
+These methods are available on the `Buffer` object, which is created via `logger.createBuffer()`.
 
-| Property / Method | Parameters                                    | Description                                                                   | Return Type |
-| ----------------- | --------------------------------------------- | ----------------------------------------------------------------------------- | ----------- |
-| `buffer.data`     | _(none)_                                      | Array of formatted log messages waiting to be saved.                          | `string[]`  |
-| `buffer.push()`   | `log`: `{ level: LogLevel, message: string }` | Adds a new message to the buffer.                                             | `void`      |
-| `buffer.flush()`  | _(none)_                                      | Clears the buffer completely. Called automatically after `writeFromBuffer()`. | `void`      |
+| Method    | Parameters                                    | Description                                                                                                   | Return Type     |
+| --------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | --------------- |
+| `push()`  | `log`: `{ level: LogLevel, message: string }` | Adds a new message to the buffer's `data` array.                                                              | `void`          |
+| `write()` | `options?`: `{ filePath?: string }`           | Writes the entire buffer content to the log file, then clears the buffer. This is the optimized write method. | `Promise<void>` |
+| `flush()` | _(none)_                                      | Clears the internal `data` array, emptying the buffer. Called automatically by `buffer.write()`.     `.       | `void`          |
 
 ---
 
