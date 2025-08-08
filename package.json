@@ -1,6 +1,6 @@
 {
   "name": "@ste_tisci/fs-logger",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A simple lightweight file-based logger for Node.js enviroment",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
