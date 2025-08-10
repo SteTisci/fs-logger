@@ -37,11 +37,6 @@ export function createFileLogger(initialPath: string): FileLogger {
       return parsedLogs
     }
 
-    if (format === 'json') {
-      const parsedLogs = JSON.parse(content)
-      return parsedLogs
-    }
-
     return content
   }
 
