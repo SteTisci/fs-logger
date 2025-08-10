@@ -1,5 +1,5 @@
 import { LogMessage } from './types'
-import { format } from './utils'
+import { format, getFileFormat } from './utils'
 import { levels } from './levels'
 import { writeFile } from './fileOps'
 
@@ -11,7 +11,7 @@ export function createBuffer(getPath: () => string) {
       if (!levels[level]) {
         throw new Error(`Invalid log level: ${level}`)
       }
-      this.data.push(format({ level, message }, levels))
+      this.data.push(format({ level, message }, levels, getFileFormat(getPath())))
     },
 
     async write(options: { filePath?: string, flush?: boolean } = {}): Promise<void> {
