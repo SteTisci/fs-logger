@@ -17,23 +17,30 @@ export function createFileLogger(initialPath: string): FileLogger {
   }
 
   async function write({ level, message }: LogMessage, options: { filePath?: string } = {}): Promise<void> {
-    const { filePath } = options
-    await writeFile(filePath || FILE_PATH.value, format({message, level}, levels, getFileFormat(filePath || FILE_PATH.value)))
-  }
+  const { filePath } = options
+  const fullPath = filePath || FILE_PATH.value
+
+  await writeFile(fullPath, format({ message, level }, levels, getFileFormat(fullPath)))
+}
+
 
   async function read(options: { filePath?: string } = {}): Promise<string | object[] | null> {
     const { filePath } = options
     const pathToRead = filePath || FILE_PATH.value
 
     const content = await readFile(pathToRead)
-
     const format = getFileFormat(pathToRead)
 
-    if (format === 'json') {
+    if (format === 'jsonl') {
       const lines = content.trim().split('\n').filter(line => line.length > 0)
       const parsedLogs = lines.map(line => JSON.parse(line))
       return parsedLogs
-    } 
+    }
+
+    if (format === 'json') {
+      const parsedLogs = JSON.parse(content)
+      return parsedLogs
+    }
 
     return content
   }

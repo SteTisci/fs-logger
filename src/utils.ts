@@ -11,7 +11,7 @@ export function getTime() : string {
 export function format({ level, message } : LogMessage, levels : Levels, fileFormat: string) : string {
   if (fileFormat === 'text') return `${getTime()} [${levels[level]}] ${message}\n`
   if (fileFormat === 'csv') return `${getTime()},${levels[level]},${message}\n`
-  if (fileFormat === 'json') return JSON.stringify({timeStamp: getTime(), level: levels[level], message: message}) + '\n'
+  if (fileFormat === 'jsonl') return JSON.stringify({ timeStamp: getTime(), level: levels[level], message: message }) + '\n'
 
   throw new Error(`Cannot format unsupported file type`)
 }
@@ -23,7 +23,7 @@ export function getFileFormat(filePath : string): string {
 
   if(format === 'txt' || format === 'log' ) return 'text'
   if(format === 'csv') return 'csv'
-  if(format === 'json') return 'json'
+  if(format === 'jsonl') return 'jsonl'
 
-  throw new Error(`Format .${format} not supported. Use .txt, .log, .json or .csv instead.`)
+  throw new Error(`Format .${format} not supported. Use .txt, .log, .jsonl or .csv instead.`)
 }
