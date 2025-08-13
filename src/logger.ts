@@ -41,7 +41,7 @@ export function createFileLogger(initialPath: string): FileLogger {
       return content
         .trim()
         .split('\n')
-        .map(line => JSON.parse(line) as LogMessage)
+        .map(line => JSON.parse(line))
     }
 
     return content

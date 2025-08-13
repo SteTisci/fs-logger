@@ -46,7 +46,7 @@ export async function writeFile(
 ): Promise<void> {
   const fullPath = path.resolve(filePath)
 
-  const dataToWrite = typeof data === 'string' ? data : data.join('\n')
+  const dataToWrite = typeof data === 'string' ? data : data.join('')
 
   append
     ? await fs.appendFile(fullPath, dataToWrite, 'utf-8')

@@ -16,19 +16,21 @@ const formatters: Record<string, (data: LogMessage, levels: Levels) => string> =
 }
 
 function toText(data: LogMessage, levels: Levels): string {
-  return `${getTime()} [${levels[data.level]}] ${data.message}`
+  return `${getTime()} [${levels[data.level]}] ${data.message}\n`
 }
 
 function toCsv(data: LogMessage, levels: Levels): string {
-  return `${getTime()},${levels[data.level]},${data.message}`
+  return `${getTime()},${levels[data.level]},${data.message}\n`
 }
 
 function toJson(data: LogMessage, levels: Levels): string {
-  return JSON.stringify({
-    timeStamp: getTime(),
-    level: levels[data.level],
-    message: data.message,
-  })
+  return (
+    JSON.stringify({
+      timeStamp: getTime(),
+      level: levels[data.level],
+      message: data.message,
+    }) + '\n'
+  )
 }
 
 export function format(data: LogMessage, levels: Levels, fileFormat: string): string {
