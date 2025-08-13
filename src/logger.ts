@@ -11,24 +11,24 @@ export function createFileLogger(initialPath: string): FileLogger {
     FILE_PATH.value = filePath
   }
 
-  async function create(options: { filePath?: string; overwrite?: boolean } = {}): Promise<void> {
-    const { filePath, overwrite = true } = options
+  async function create(filePath?: string, options: { overwrite?: boolean } = {}): Promise<void> {
+    const { overwrite = true } = options
 
     await createFile(filePath || FILE_PATH.value, overwrite)
   }
 
   async function write(
-    { level, message }: LogMessage,
-    options: { filePath?: string; append?: boolean } = {},
+    log: LogMessage,
+    filePath?: string,
+    options: { append?: boolean } = {},
   ): Promise<void> {
-    const { filePath, append = true } = options
+    const { append = true } = options
     const fullPath = filePath || FILE_PATH.value
 
-    await writeFile(fullPath, format({ message, level }, levels, getFileFormat(fullPath)), append)
+    await writeFile(fullPath, format(log, levels, getFileFormat(fullPath)), append)
   }
 
-  async function read(options: { filePath?: string } = {}): Promise<string | LogMessage[] | null> {
-    const { filePath } = options
+  async function read(filePath?: string): Promise<string | LogMessage[] | []> {
     const fullPath = filePath || FILE_PATH.value
 
     const content = await readFile(fullPath)
@@ -47,10 +47,9 @@ export function createFileLogger(initialPath: string): FileLogger {
     return content
   }
 
-  async function remove(options: { filePath?: string } = {}): Promise<void> {
-    const { filePath } = options
-
-    await removeFile(filePath || FILE_PATH.value)
+  async function remove(filePath?: string): Promise<void> {
+    const fullPath = filePath || FILE_PATH.value
+    await removeFile(fullPath)
   }
 
   return {

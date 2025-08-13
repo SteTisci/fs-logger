@@ -11,7 +11,6 @@ export async function fileExists(filePath: string): Promise<boolean> {
     if (err.code !== 'ENOENT') {
       throw err
     }
-
     return false
   }
 }
@@ -35,7 +34,6 @@ export async function readFile(filePath: string): Promise<string> {
   }
 
   const fileContent = await fs.readFile(fullPath, 'utf-8')
-
   return fileContent
 }
 
