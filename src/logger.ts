@@ -1,40 +1,47 @@
-import { createBuffer } from './buffer.js'
-import { createFile, writeFile, readFile, removeFile, fileExists } from './fileOps.js'
-import { format, getFileFormat } from './utils.js'
-import { levels } from './levels.js'
-import { FileLogger, LogMessage } from './types.js'
+import { createBuffer } from './buffer'
+import { createFile, writeFile, readFile, removeFile, fileExists } from './fileOps'
+import { format, getFileFormat } from './format'
+import { levels } from './levels'
+import { FileLogger, LogMessage } from './types'
 
 export function createFileLogger(initialPath: string): FileLogger {
-  const FILE_PATH = {value: initialPath}
+  const FILE_PATH = { value: initialPath }
 
   function definePath(filePath: string): void {
     FILE_PATH.value = filePath
   }
 
-  async function create(options: {filePath?: string, overwrite?: boolean} = {}): Promise<void> {
+  async function create(options: { filePath?: string; overwrite?: boolean } = {}): Promise<void> {
     const { filePath, overwrite = true } = options
+
     await createFile(filePath || FILE_PATH.value, overwrite)
   }
 
-  async function write({ level, message }: LogMessage, options: { filePath?: string } = {}): Promise<void> {
-  const { filePath } = options
-  const fullPath = filePath || FILE_PATH.value
-
-  await writeFile(fullPath, format({ message, level }, levels, getFileFormat(fullPath)))
-}
-
-
-  async function read(options: { filePath?: string } = {}): Promise<string | object[] | null> {
+  async function write(
+    { level, message }: LogMessage,
+    options: { filePath?: string } = {},
+  ): Promise<void> {
     const { filePath } = options
-    const pathToRead = filePath || FILE_PATH.value
+    const fullPath = filePath || FILE_PATH.value
 
-    const content = await readFile(pathToRead)
-    const format = getFileFormat(pathToRead)
+    await writeFile(fullPath, format({ message, level }, levels, getFileFormat(fullPath)))
+  }
 
-    if (format === 'jsonl') {
-      const lines = content.trim().split('\n').filter(line => line.length > 0)
-      const parsedLogs = lines.map(line => JSON.parse(line))
-      return parsedLogs
+  async function read(options: { filePath?: string } = {}): Promise<string | LogMessage[] | null> {
+    const { filePath } = options
+    const fullPath = filePath || FILE_PATH.value
+
+    const content = await readFile(fullPath)
+
+    if (!content.trim()) {
+      return []
+    }
+
+    if (getFileFormat(fullPath) === 'jsonl') {
+      return content
+        .trim()
+        .split('\n')
+        .map(line => JSON.parse(line) as LogMessage)
     }
 
     return content
@@ -42,7 +49,8 @@ export function createFileLogger(initialPath: string): FileLogger {
 
   async function remove(options: { filePath?: string } = {}): Promise<void> {
     const { filePath } = options
-    await removeFile(filePath || FILE_PATH.value) 
+
+    await removeFile(filePath || FILE_PATH.value)
   }
 
   return {

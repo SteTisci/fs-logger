@@ -2,36 +2,63 @@ import fs from 'fs/promises'
 import path from 'path'
 
 export async function fileExists(filePath: string): Promise<boolean> {
+  const fullPath = path.resolve(filePath)
+
   try {
-    await fs.access(path.resolve(filePath))
+    await fs.access(fullPath)
     return true
-  } catch {
+  } catch (err: any) {
+    if (err.code !== 'ENOENT') {
+      throw err
+    }
+
     return false
   }
 }
 
-export async function createFile( filePath : string, overwrite = true): Promise<void> {
+export async function createFile(filePath: string, overwrite?: boolean): Promise<void> {
   const fullPath = path.resolve(filePath)
-  
-  await fs.mkdir(path.dirname(fullPath), { recursive: true })
 
-  const exists = await fileExists(fullPath)
-  if (exists && !overwrite) {
+  if ((await fileExists(fullPath)) && !overwrite) {
     return
   }
 
+  await fs.mkdir(path.dirname(fullPath), { recursive: true })
   await fs.writeFile(fullPath, '', 'utf-8')
 }
 
-export async function writeFile(filePath: string, data: string | string[]): Promise<void> {
-  const message = typeof data === 'string' ? data : data.join('')
-  await fs.appendFile(path.resolve(filePath), message, 'utf-8')
+export async function readFile(filePath: string): Promise<string> {
+  const fullPath = path.resolve(filePath)
+
+  if (!(await fileExists(fullPath))) {
+    throw new Error(`Cannot find file at ${fullPath} to read`)
+  }
+
+  const fileContent = await fs.readFile(fullPath, 'utf-8')
+
+  return fileContent
 }
 
-export async function readFile(filePath: string): Promise<string> {
-  return await fs.readFile(path.resolve(filePath), 'utf-8')
+export async function writeFile(
+  filePath: string,
+  data: string | string[],
+  append?: boolean,
+): Promise<void> {
+  const fullPath = path.resolve(filePath)
+
+  const dataToWrite = typeof data === 'string' ? data : data.join('\n')
+
+  append
+    ? await fs.appendFile(fullPath, dataToWrite, 'utf-8')
+    : await fs.writeFile(fullPath, dataToWrite, 'utf-8')
 }
 
 export async function removeFile(filePath: string): Promise<void> {
-  await fs.rm(path.resolve(filePath))
+  const fullPath = path.resolve(filePath)
+
+  if (!(await fileExists(fullPath))) {
+    throw new Error(`Cannot find file at ${fullPath} to remove`)
+  }
+
+  await fs.rm(fullPath)
 }
