@@ -15,10 +15,12 @@ export function createBuffer(getPath: () => string): Buffer {
       this.data.push(format({ level, message }, levels, getFileFormat(getPath())))
     },
 
-    async write(options: { filePath?: string; flush?: boolean } = {}): Promise<void> {
-      const { filePath, flush = true } = options
+    async write(
+      options: { filePath?: string; flush?: boolean; append?: boolean } = {},
+    ): Promise<void> {
+      const { filePath, flush = true, append = true } = options
 
-      await writeFile(filePath || getPath(), this.data)
+      await writeFile(filePath || getPath(), this.data, append)
 
       if (flush) {
         this.flush()

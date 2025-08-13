@@ -117,15 +117,15 @@ await logger.remove()
 
 These are the primary methods available on the object returned by `createFileLogger()`.
 
-| Method               | Parameters                                                                                  | Description                                                                                                                 | Return Type                           |
-| -------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| `createFileLogger()` | `initialPath`: `string`                                                                     | A factory function that creates and returns a new logger instance.                                                          | `string`                              |
-| `definePath()`       | `filePath`: `string`                                                                        | Updates the log file path for all subsequent operations performed by this logger instance.                                  | `void`                                |
-| `fileExists()`       | `filePath`: `string`                                                                        | Checks if a file exists at the specified path.                                                                              | `Promise<boolean>`                    |
-| `create()`           | `options`: `{ filePath?: string, overwrite?: boolean }`                                     | Creates a new log file at the specified or default path. `overwrite: false` prevents overwriting an existing file.          | `Promise<void>`                       |
-| `write()`            | `logMessage`: `{ level: LogLevel, message: string }`<br>`options?`: `{ filePath?: string }` | Writes a single, formatted log message directly to the log file, appending it to the end. Does **not** use the buffer.      | `Promise<void>`                       |
-| `read()`             | `options?`: `{ filePath?: string }`                                                         | Reads the content of the log file. The return type depends on the file extension (`string` for text, `object[]` for JSONL). | `Promise<string \| object[] \| null>` |
-| `remove()`           | `options?`: `{ filePath?: string }`                                                         | Deletes the log file.                                                                                                       | `Promise<void>`                       |
+| Method               | Parameters                                                                                                    | Description                                                                                                                 | Return Type                               |
+| -------------------- | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `createFileLogger()` | `initialPath`: `string`                                                                                       | A factory function that creates and returns a new logger instance.                                                          | `string`                                  |
+| `definePath()`       | `filePath`: `string`                                                                                          | Updates the log file path for all subsequent operations performed by this logger instance.                                  | `void`                                    |
+| `fileExists()`       | `filePath`: `string`                                                                                          | Checks if a file exists at the specified path.                                                                              | `Promise<boolean>`                        |
+| `create()`           | `options`: `{ filePath?: string, overwrite?: boolean }`                                                       | Creates a new log file at the specified or default path. `overwrite: false` prevents overwriting an existing file.          | `Promise<void>`                           |
+| `write()`            | `logMessage`: `{ level: LogLevel, message: string }`<br>`options?`: `{ filePath?: string, append?: boolean }` | Writes a single, formatted log message directly to the log file, **default append:** `true`. Does **not** use the buffer.   | `Promise<void>`                           |
+| `read()`             | `options?`: `{ filePath?: string }`                                                                           | Reads the content of the log file. The return type depends on the file extension (`string` for text, `object[]` for JSONL). | `Promise<string \| LogMessage[] \| null>` |
+| `remove()`           | `options?`: `{ filePath?: string }`                                                                           | Deletes the log file.                                                                                                       | `Promise<void>`                           |
 
 ---
 
@@ -133,11 +133,11 @@ These are the primary methods available on the object returned by `createFileLog
 
 These methods are available on the `Buffer` object, which is created via `logger.createBuffer()`.
 
-| Method    | Parameters                                           | Description                                                                                                                                            | Return Type     |
-| --------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------- |
-| `push()`  | `log`: `{ level: LogLevel, message: string }`        | Adds a new message to the buffer's `data` array.                                                                                                       | `void`          |
-| `write()` | `options?`: `{ filePath?: string, flush?: boolean }` | Writes the entire buffer content to the log file. By default, the buffer is flushed after writing. Set `flush: false` to retain the buffer's contents. | `Promise<void>` |
-| `flush()` | _(none)_                                             | Clears the internal `data` array, emptying the buffer. Called automatically by `buffer.write()`. unless the `flush` option is set to `false`.          | `void`          |
+| Method    | Parameters                                                             | Description                                                                                                                                                            | Return Type     |
+| --------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `push()`  | `log`: `{ level: LogLevel, message: string }`                          | Adds a new message to the buffer's `data` array.                                                                                                                       | `void`          |
+| `write()` | `options?`: `{ filePath?: string, flush?: boolean, append?: boolean }` | Writes the entire buffer content to the log file. **Default append:** `true`. The buffer is flushed after writing. Set `flush: false` to retain the buffer's contents. | `Promise<void>` |
+| `flush()` | _(none)_                                                               | Clears the internal `data` array, emptying the buffer. Called automatically by `buffer.write()`. unless the `flush` option is set to `false`.                          | `void`          |
 
 ---
 

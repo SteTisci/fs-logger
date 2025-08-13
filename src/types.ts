@@ -17,14 +17,17 @@ export interface LogMessage {
 export interface Buffer {
   data: string[]
   push({ level, message }: LogMessage): void
-  write(options?: { filePath?: string; flush?: boolean }): Promise<void>
+  write(options?: { filePath?: string; flush?: boolean; append?: boolean }): Promise<void>
   flush(): void
 }
 
 export interface FileLogger {
   definePath(filePath: string): void
   create(options?: { filePath?: string; overwrite?: boolean }): Promise<void>
-  write({ level, message }: LogMessage, options?: { filePath?: string }): Promise<void>
+  write(
+    { level, message }: LogMessage,
+    options?: { filePath?: string; append?: boolean },
+  ): Promise<void>
   read(options?: { filePath?: string }): Promise<string | object | null>
   remove(options?: { filePath?: string }): Promise<void>
   createBuffer(): Buffer

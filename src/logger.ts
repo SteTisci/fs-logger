@@ -19,12 +19,12 @@ export function createFileLogger(initialPath: string): FileLogger {
 
   async function write(
     { level, message }: LogMessage,
-    options: { filePath?: string } = {},
+    options: { filePath?: string; append?: boolean } = {},
   ): Promise<void> {
-    const { filePath } = options
+    const { filePath, append = true } = options
     const fullPath = filePath || FILE_PATH.value
 
-    await writeFile(fullPath, format({ message, level }, levels, getFileFormat(fullPath)))
+    await writeFile(fullPath, format({ message, level }, levels, getFileFormat(fullPath)), append)
   }
 
   async function read(options: { filePath?: string } = {}): Promise<string | LogMessage[] | null> {
