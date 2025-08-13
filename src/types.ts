@@ -28,7 +28,7 @@ export interface FileLogger {
     { level, message }: LogMessage,
     options?: { filePath?: string; append?: boolean },
   ): Promise<void>
-  read(options?: { filePath?: string }): Promise<string | object | null>
+  read(options?: { filePath?: string }): Promise<string | LogMessage[] | null>
   remove(options?: { filePath?: string }): Promise<void>
   createBuffer(): Buffer
   fileExists(filePath: string): Promise<boolean>
